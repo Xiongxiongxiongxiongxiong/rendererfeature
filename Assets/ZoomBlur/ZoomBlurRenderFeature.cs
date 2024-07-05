@@ -8,6 +8,7 @@ public class ZoomBlurRenderFeature : ScriptableRendererFeature
     
     class ZoomBlurPass : ScriptableRenderPass
     {
+        private RenderTargetIdentifier source { get; set; }
          static readonly string k_RenderTag = "Render ZoomBlur Effects";
          private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
          private static readonly int TempTargetId = Shader.PropertyToID("_TempTargetZoomBlur");
@@ -45,6 +46,8 @@ public class ZoomBlurRenderFeature : ScriptableRendererFeature
 
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         {
+            ScriptableRenderer renderer = renderingData.cameraData.renderer;
+            source = renderer.cameraColorTarget;
         }
 
 
@@ -131,7 +134,7 @@ public class ZoomBlurRenderFeature : ScriptableRendererFeature
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        zoomBlurPass.Setup(renderer.cameraColorTarget);
+       // zoomBlurPass.Setup(renderer.cameraColorTarget);
         renderer.EnqueuePass(zoomBlurPass);
     }
 }

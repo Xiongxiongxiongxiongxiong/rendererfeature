@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   components:
   - {fileID: 266911935654961422}
+  - {fileID: 3191296853924292707}
 --- !u!114 &266911935654961422
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -26,7 +27,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66f335fb1ffd8684294ad653bf1c7564, type: 3}
   m_Name: ColorAdjustments
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   postExposure:
     m_OverrideState: 1
     m_Value: 4
@@ -42,3 +43,28 @@ MonoBehaviour:
   saturation:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &3191296853924292707
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 614e7792c4e334e4f89a32118ca2936e, type: 3}
+  m_Name: ZoomBlur
+  m_EditorClassIdentifier: 
+  active: 1
+  focusPower:
+    m_OverrideState: 1
+    m_Value: 4.05
+  focusDetail:
+    m_OverrideState: 1
+    m_Value: 332
+  focusScreenPosition:
+    m_OverrideState: 1
+    m_Value: {x: 1024, y: 1080}
+  referrnceResolutionX:
+    m_OverrideState: 1
+    m_Value: 1334

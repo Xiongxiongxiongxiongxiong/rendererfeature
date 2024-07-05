@@ -34,12 +34,12 @@ public class BloomRendererFeature : ScriptableRendererFeature
         //}
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         { // äÖÈ¾Ç°»Øµ÷
-            RenderTextureDescriptor blitTargetDescriptor = renderingData.cameraData.cameraTargetDescriptor;
-            blitTargetDescriptor.depthBufferBits = 0;
+          //  RenderTextureDescriptor blitTargetDescriptor = renderingData.cameraData.cameraTargetDescriptor;
+         //   blitTargetDescriptor.depthBufferBits = 0;
             ScriptableRenderer renderer = renderingData.cameraData.renderer;
             source = renderer.cameraColorTarget;
-            cmd.GetTemporaryRT(destinationId, blitTargetDescriptor, filterMode);
-            destination = new RenderTargetIdentifier(destinationId);
+          //  cmd.GetTemporaryRT(destinationId, blitTargetDescriptor, filterMode);
+          //  destination = new RenderTargetIdentifier(destinationId);
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
