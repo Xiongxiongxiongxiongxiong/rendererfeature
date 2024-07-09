@@ -37,9 +37,10 @@ public class ZoomBlurRenderFeature : ScriptableRendererFeature
              zoomBlurMaterial = new Material(shader);//CoreUtils.CreateEngineMaterial(shader));
          }
 
-         public void Setup(in RenderTargetIdentifier currentTar)
+         public void Setup(ZoomBlur zoomBlur)
          {
-             this.currentTarget = currentTar;
+             this.zoomBlur = zoomBlur;
+          //   this.currentTarget = currentTar;
          }
          
          
@@ -134,7 +135,9 @@ public class ZoomBlurRenderFeature : ScriptableRendererFeature
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-       // zoomBlurPass.Setup(renderer.cameraColorTarget);
+        var volumeStack = VolumeManager.instance.stack;
+        var zoomBlur = volumeStack.GetComponent<ZoomBlur>();
+        zoomBlurPass.Setup(zoomBlur);
         renderer.EnqueuePass(zoomBlurPass);
     }
 }
