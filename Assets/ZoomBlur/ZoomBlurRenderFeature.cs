@@ -12,7 +12,7 @@ public class ZoomBlurRenderFeature : ScriptableRendererFeature
          static readonly string k_RenderTag = "Render ZoomBlur Effects";
          private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
          private static readonly int TempTargetId = Shader.PropertyToID("_TempTargetZoomBlur");
-         private static readonly int FocusPowerId = Shader.PropertyToID("_FocusPower");
+         private static readonly int FocusPowerId = Shader.PropertyToID("_FousPower");
          private static readonly int FocusDetailId = Shader.PropertyToID("_FocusDetail");
          private static readonly int FocusScreenPositionId = Shader.PropertyToID("_FocusScreenPosition");
          private static readonly int ReferenceResolutionXId = Shader.PropertyToID("_ReferenceResolutionX");
@@ -34,7 +34,7 @@ public class ZoomBlurRenderFeature : ScriptableRendererFeature
                  return;
              }
 
-             zoomBlurMaterial = CoreUtils.CreateEngineMaterial(shader);
+             zoomBlurMaterial = new Material(shader);//CoreUtils.CreateEngineMaterial(shader));
          }
 
          public void Setup(in RenderTargetIdentifier currentTar)

@@ -30,6 +30,19 @@ MonoBehaviour:
   blitMaterial: {fileID: 2100000, guid: 194b889508f2ab148b5cd20427a13a75, type: 2}
   Saturation: 1
   Contrast: 1
+--- !u!114 &-5747334641509326414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c7d65c59d1acf54680af4e196974278, type: 3}
+  m_Name: TestRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
 --- !u!114 &-1882915114644360428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,7 +77,9 @@ MonoBehaviour:
   - {fileID: -6173823114019107513}
   - {fileID: -1882915114644360428}
   - {fileID: -8284404098349033897}
-  m_RendererFeatureMap: 478dcb8e962c52aa14b368e9ad8adee557961d7e5de2078d
+  - {fileID: -5747334641509326414}
+  - {fileID: 5971841171682829806}
+  m_RendererFeatureMap: 478dcb8e962c52aa14b368e9ad8adee557961d7e5de2078db2218a1f985d3db0ee2535cde73de052
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -134,3 +149,17 @@ MonoBehaviour:
   m_Active: 1
   shader: {fileID: 4800000, guid: 3f4917ce92077444aabab14a177bee73, type: 3}
   a: -62.9
+--- !u!114 &5971841171682829806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baf28fd33e2ed984388564eba85c656a, type: 3}
+  m_Name: ColorBalanceRenderFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  colorBalanceMaterial: {fileID: 2100000, guid: 8dbdfe1d6ee2006499005cf060129339, type: 2}
