@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 272fa38c69810284dbb2999284ca4c41, type: 3}
   m_Name: ColorBalance
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   shadows:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_Value: {r: 0, g: 0.56810045, b: 1, a: 1}
   midtones:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_Value: {r: 0.99259335, g: 1, b: 0.2688679, a: 1}
   highlights:
-    m_OverrideState: 0
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 0.6367924, b: 0.6367924, a: 1}
 --- !u!114 &-2338366400135190741
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -52,7 +52,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   components:
   - {fileID: 266911935654961422}
-  - {fileID: 3191296853924292707}
   - {fileID: -8953269300548417199}
   - {fileID: 2780205874857011205}
 --- !u!114 &266911935654961422
