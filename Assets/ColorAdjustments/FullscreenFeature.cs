@@ -4,8 +4,8 @@ using UnityEngine.Rendering;
 
 public class FullscreenFeature : ScriptableRendererFeature
 {
-  //  public Settings settings = new Settings(); // ÉèÖÃ
-    FullscreenPass blitPass; // ºó´¦ÀíµÄPass
+  //  public Settings settings = new Settings(); // è®¾ç½®
+    FullscreenPass blitPass; // åå¤„ç†çš„Pass
     public RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
     public Material blitMaterial = null;
     public float Saturation;
@@ -15,28 +15,28 @@ public class FullscreenFeature : ScriptableRendererFeature
 
     public class FullscreenPass : ScriptableRenderPass
     {
-        // public FullscreenFeature settings; // ÅäÖÃÏî
+        // public FullscreenFeature settings; // é…ç½®é¡¹
 
         private Material bMaterial ;
-        private string profilerTag; // ·ÖÎöÆ÷±êÇ©, ÔÚFrame DebuggerÖĞ¿ÉÒÔ¿´µ½¸Ã±êÇ©
-        private RenderTargetIdentifier source; // Ô´»º´æ±êÊ¶
-        private RenderTargetIdentifier destination; // Ä¿±ê»º´æ±êÊ¶
-        private int destinationId; // Ä¿±ê»º´æid
-        private FilterMode filterMode; // ÎÆÀí²ÉÑùÂË²¨Ä£Ê½, È¡ÖµÓĞ: Point¡¢Bilinear¡¢Trilinear
+        private string profilerTag; // åˆ†æå™¨æ ‡ç­¾, åœ¨Frame Debuggerä¸­å¯ä»¥çœ‹åˆ°è¯¥æ ‡ç­¾
+        private RenderTargetIdentifier source; // æºç¼“å­˜æ ‡è¯†
+        private RenderTargetIdentifier destination; // ç›®æ ‡ç¼“å­˜æ ‡è¯†
+        private int destinationId; // ç›®æ ‡ç¼“å­˜id
+        private FilterMode filterMode; // çº¹ç†é‡‡æ ·æ»¤æ³¢æ¨¡å¼, å–å€¼æœ‰: Pointã€Bilinearã€Trilinear
         public float _Contrast;
         public float _Saturation;
 
         public FullscreenPass(string tag , Material material,float Contrast ,float Saturation)
         {
             profilerTag = tag;
-            bMaterial = material; // ½«´«ÈëµÄ²ÄÖÊ¸³Öµ¸øbMaterial
+            bMaterial = material; // å°†ä¼ å…¥çš„æè´¨èµ‹å€¼ç»™bMaterial
             _Contrast = Contrast;
             _Saturation = Saturation;
             destinationId = Shader.PropertyToID("_TempRT");
         }
 
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
-        { // äÖÈ¾Ç°»Øµ÷
+        { // æ¸²æŸ“å‰å›è°ƒ
             RenderTextureDescriptor blitTargetDescriptor = renderingData.cameraData.cameraTargetDescriptor;
             blitTargetDescriptor.depthBufferBits = 0;
             ScriptableRenderer renderer = renderingData.cameraData.renderer;
@@ -46,7 +46,7 @@ public class FullscreenFeature : ScriptableRendererFeature
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-        { // Ö´ĞĞäÖÈ¾
+        { // æ‰§è¡Œæ¸²æŸ“
             bMaterial.SetFloat("_Saturation", _Saturation);
             bMaterial.SetFloat("_Contrast", _Contrast);
             CommandBuffer cmd = CommandBufferPool.Get(profilerTag);
@@ -57,7 +57,7 @@ public class FullscreenFeature : ScriptableRendererFeature
         }
 
         public override void FrameCleanup(CommandBuffer cmd)
-        { // äÖÈ¾ºó»Øµ÷
+        { // æ¸²æŸ“åå›è°ƒ
             if (destinationId != -1)
             {
                 cmd.ReleaseTemporaryRT(destinationId);
@@ -74,7 +74,7 @@ public class FullscreenFeature : ScriptableRendererFeature
 
 
     public override void Create()
-    { // ´´½¨ºó´¦ÀíPass(×Ô¶¯»Øµ÷)
+    { // åˆ›å»ºåå¤„ç†Pass(è‡ªåŠ¨å›è°ƒ)
 
         blitPass = new FullscreenPass(name, blitMaterial , Contrast, Saturation);
       //  blitPass._Contrast = Contrast;
@@ -82,7 +82,7 @@ public class FullscreenFeature : ScriptableRendererFeature
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
-    { // Ìí¼ÓäÖÈ¾Pass(×Ô¶¯»Øµ÷)
+    { // æ·»åŠ æ¸²æŸ“Pass(è‡ªåŠ¨å›è°ƒ)
         if (blitMaterial == null)
         {
             return;
@@ -95,7 +95,7 @@ public class FullscreenFeature : ScriptableRendererFeature
 
    // [System.Serializable]
     //public class Settings
-    //{ // ÅäÖÃÏî
+    //{ // é…ç½®é¡¹
     //    public RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
     //    public Material blitMaterial = null;
    // }

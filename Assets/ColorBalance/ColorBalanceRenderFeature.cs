@@ -46,6 +46,10 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
             colorBalanceMaterial.SetColor("_Shadows", colorBalance.shadows.value);
             colorBalanceMaterial.SetColor("_Midtones", colorBalance.midtones.value);
             colorBalanceMaterial.SetColor("_Highlights", colorBalance.highlights.value);
+            colorBalanceMaterial.SetFloat("_Saturation", colorBalance._Saturation.value);
+            colorBalanceMaterial.SetFloat("_Contrast", colorBalance._Contrast.value);
+            
+            
 
             Blit(cmd, tempTexture.Identifier(), source);
 

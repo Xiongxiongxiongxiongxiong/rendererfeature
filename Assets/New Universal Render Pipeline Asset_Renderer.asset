@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FullscreenFeature
   m_EditorClassIdentifier: 
   m_Active: 0
-  renderPassEvent: 450
+  renderPassEvent: 300
   blitMaterial: {fileID: 2100000, guid: 194b889508f2ab148b5cd20427a13a75, type: 2}
   Saturation: 1
   Contrast: 1
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 0
   settings:
-    bloomMaterial: {fileID: 2100000, guid: f41549c2b75255d43aca57ecced84de7, type: 2}
+    bloomMaterial: {fileID: 2100000, guid: d48cece90282f574fbd08b7351b9183a, type: 2}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,7 +66,9 @@ MonoBehaviour:
   - {fileID: 5971841171682829806}
   - {fileID: -5254439694222631563}
   - {fileID: 2009797510762529470}
-  m_RendererFeatureMap: 478dcb8e962c52aab2218a1f985d3db0ee2535cde73de05275dd25f4ef7a14b7be02770b303ce41b
+  - {fileID: 2369947839222586816}
+  - {fileID: 5160999043508411891}
+  m_RendererFeatureMap: 478dcb8e962c52aab2218a1f985d3db0ee2535cde73de05275dd25f4ef7a14b7be02770b303ce41bc01d11d500bfe320f31d7332498d9f47
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -149,7 +151,44 @@ MonoBehaviour:
   m_Name: ColorBalanceRenderFeature
   m_EditorClassIdentifier: 
   m_Active: 1
+  Event: 300
   colorBalanceMaterial: {fileID: 2100000, guid: 8dbdfe1d6ee2006499005cf060129339, type: 2}
+--- !u!114 &2369947839222586816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e7ffad618fb34146873c9108c0e3ca9, type: 3}
+  m_Name: BloomFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    bloomMaterial: {fileID: 2100000, guid: 6a4641129a6b76b4f886f98c5dde477c, type: 2}
+    renderPassEvent: 550
+    threshold: 0.478
+    radius: 8
+    iterations: 8
+    intensity: 2
+--- !u!114 &5160999043508411891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 241bdac4a53645d468bb7825a9762120, type: 3}
+  m_Name: ColorGradingRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    material: {fileID: 2100000, guid: e8ea7ecaeb62ee3449666410ecc6d98e, type: 2}
+    renderPassEvent: 550
 --- !u!114 &5971841171682829806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,6 +202,7 @@ MonoBehaviour:
   m_Name: ColorBalanceRenderFeature
   m_EditorClassIdentifier: 
   m_Active: 0
+  Event: 300
   colorBalanceMaterial: {fileID: 2100000, guid: 8dbdfe1d6ee2006499005cf060129339, type: 2}
 --- !u!114 &6805158631170234271
 MonoBehaviour:

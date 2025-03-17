@@ -90,8 +90,8 @@ public class GeneralRendererFeature : ScriptableRendererFeature
             Debug.LogWarning("Missing Bloom Material");
             return;
         }
-        generalPass.renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
+        generalPass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
     //   bloomPass.Setup(renderer.cameraColorTarget);
-    renderer.EnqueuePass(generalPass);
+        renderer.EnqueuePass(generalPass);
     }
 }

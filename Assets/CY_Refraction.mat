@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Hidden_Custom_ColorBalance
-  m_Shader: {fileID: 4800000, guid: 9da3c3e4b59300245bdea5a19456368f, type: 3}
+  m_Name: CY_Refraction
+  m_Shader: {fileID: 4800000, guid: 14acb453d0641f2438c0bffaf8c6240d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,20 +23,24 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 3427a30db67222347ad5bb19ae6647cf, type: 3}
+    - _MaskTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BrightColor: 1
-    - _Brightness: 1
-    - _Contrast: 1
-    - _DarkColor: 1
-    - _MidColor: 1
-    - _Saturation: 1
+    - _AlphaCutoff: 0.5
+    - _NormalScale: 0.5
+    - _Uspeed: 0
+    - _Vspeed: 0
     m_Colors:
-    - _Highlights: {r: 1, g: 1, b: 1, a: 1}
-    - _Midtones: {r: 1, g: 1, b: 1, a: 1}
-    - _Shadows: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

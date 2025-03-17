@@ -3,12 +3,17 @@ Shader "Hidden/Custom/ColorBalance"
     Properties
     {
         _MainTex("_MainTex",2D) ="white" {}
+        //
         _Shadows ("Shadows", Color) = (1,1,1,1)
         _Midtones ("Midtones", Color) = (1,1,1,1)
         _Highlights ("Highlights", Color) = (1,1,1,1)
         _BrightColor ("Bright Color", float) = 1
         _MidColor ("Mid Color", float) = 1
         _DarkColor ("Dark Color", float) = 1
+        //
+        _Brightness("Brightness", Range(0.5, 3)) = 1 // ����
+        _Saturation("Saturation", Range(0.1, 5)) = 1 // ���Ͷ�
+        _Contrast("Contrast", Range(0.4, 3)) = 1 // �Աȶ�
     }
     SubShader
     {
@@ -42,33 +47,13 @@ Shader "Hidden/Custom/ColorBalance"
             float _MidColor;
             float _DarkColor;
 
-            v2f vert (appdata v)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
-                return o;
-            }
+            float _Brightness;
+            float _Saturation;
+            float _Contrast;
 
-            half4 frag (v2f i) : SV_Target
+            half3 ColorBalance(half4 color)
             {
-                half4 color = tex2D(_MainTex, i.uv);
                 float luminance = dot(color.rgb, float3(0.2126, 0.7152, 0.0722));
-               // fixed luminance = 0.2125 * color.r + 0.7154 * color.g + 0.0721 * color.b;
-
-                // if (luminance < 0.33)
-                // {
-                //     color.rgb *= _Shadows.rgb * _BrightColor;
-                // }
-                // else if (luminance > 0.66)
-                // {
-                //     color.rgb *= _Highlights.rgb * _DarkColor;;//_Midtones.rgb * _MidColor;
-                // }
-                // else
-                // {
-                //     color.rgb *= _Midtones.rgb * _MidColor;
-                // }
-
                 half4 shadowColor =color* _Shadows * _DarkColor;
                 half4 midtoneColor = color*_Midtones * _MidColor;
                 half4 highlightColor = color*_Highlights * _BrightColor;
@@ -90,40 +75,34 @@ Shader "Hidden/Custom/ColorBalance"
                     finalColor = lerp(midtoneColor.rgb, highlightColor.rgb, t);
                 }
 
-                color.rgb = finalColor;
+                return finalColor;
+            }
+            half3 Fullscreen(half3 tex)
+            {
+                    fixed3 finalColor = tex.rgb * _Brightness; // Ӧ������_Brightness
+                    fixed luminance = 0.2125 * tex.r + 0.7154 * tex.g + 0.0721 * tex.b; // ��������
+                    fixed3 luminanceColor = fixed3(luminance, luminance, luminance); // ���Ͷ�Ϊ0������Ϊluminance����ɫ
+                    finalColor = lerp(luminanceColor, finalColor, _Saturation); // Ӧ�ñ��Ͷ�_Saturation
+                    fixed3 avgColor = fixed3(0.5, 0.5, 0.5); // ���Ͷ�Ϊ0������Ϊ0.5����ɫ
+                    finalColor = lerp(avgColor, finalColor, _Contrast); // Ӧ�öԱȶ�_Contrast
+                return finalColor;
+            }
+            
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = v.uv;
+                return o;
+            }
 
-
+            half4 frag (v2f i) : SV_Target
+            {
+                half4 color = tex2D(_MainTex, i.uv);
+                half3 cl=ColorBalance(color);
+                half3 c=Fullscreen(cl);
                 
-
-                // half4 shadowColor = _Shadows * _DarkColor;
-                // half4 midtoneColor = _Midtones * _MidColor;
-                // half4 highlightColor = _Highlights * _BrightColor;
-                //
-                // if (luminance < 0.33)
-                // {
-                //     float t = saturate((luminance - 0.0) / (0.33 - 0.0));
-                //     color.rgb = lerp(color.rgb, shadowColor.rgb, t);
-                // }
-                // else if (luminance < 0.66)
-                // {
-                //     float t = saturate((luminance - 0.33) / (0.66 - 0.33));
-                //     color.rgb = lerp(shadowColor.rgb, midtoneColor.rgb, t);
-                // }
-                // else
-                // {
-                //     float t = saturate((luminance - 0.66) / (1.0 - 0.66));
-                //     color.rgb = lerp(midtoneColor.rgb, highlightColor.rgb, t);
-                // }
-
-
-
-
-
-                
-                // color.rgb = color.rgb * _Shadows.rgb;
-                // color.rgb = color.rgb * _Midtones.rgb;
-                // color.rgb = color.rgb * _Highlights.rgb;
-                return color;
+                return half4(c,1);
             }
             ENDCG
         }
