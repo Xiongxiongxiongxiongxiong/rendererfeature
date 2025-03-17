@@ -11,17 +11,17 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
         private RenderTargetIdentifier source;
         private RenderTargetHandle tempTexture;
         private ColorBalance colorBalance;
-
+        private TestVolume01 testVolume01;
         public ColorBalancePass(Material material)
         {
             colorBalanceMaterial = material;
             tempTexture.Init("_TemporaryColorTexture");
         }
 
-        public void Setup( ColorBalance colorBalance)
+        public void Setup(ColorBalance colorBalance, TestVolume01 testVolume)
         {
-          //  source = src;
             this.colorBalance = colorBalance;
+            this.testVolume01 = testVolume;
         }
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         { // 渲染前回调
@@ -34,23 +34,32 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
         }
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            if (colorBalance == null || !colorBalance.IsActive())
-                return;
+            // 合并判断逻辑，允许任意一个 VolumeComponent 激活
+            bool isColorBalanceActive = colorBalance != null && colorBalance.IsActive();
+            bool isTestVolumeActive = testVolume01 != null && testVolume01.IsActive();
+            if (!isColorBalanceActive && !isTestVolumeActive) return;
 
             CommandBuffer cmd = CommandBufferPool.Get("ColorBalance");
             RenderTextureDescriptor opaqueDesc = renderingData.cameraData.cameraTargetDescriptor;
 
             cmd.GetTemporaryRT(tempTexture.id, opaqueDesc);
+
+            // 先设置材质参数
+            if (isColorBalanceActive)
+            {
+                colorBalanceMaterial.SetColor("_Shadows", colorBalance.shadows.value);
+                colorBalanceMaterial.SetColor("_Midtones", colorBalance.midtones.value);
+                colorBalanceMaterial.SetColor("_Highlights", colorBalance.highlights.value);
+            }
+
+            if (isTestVolumeActive)
+            {
+                colorBalanceMaterial.SetFloat("_Saturation", testVolume01._Saturation.value);
+                colorBalanceMaterial.SetFloat("_Contrast", testVolume01._Contrast.value);
+            }
+
+            // 再执行 Blit
             Blit(cmd, source, tempTexture.Identifier(), colorBalanceMaterial, 0);
-
-            colorBalanceMaterial.SetColor("_Shadows", colorBalance.shadows.value);
-            colorBalanceMaterial.SetColor("_Midtones", colorBalance.midtones.value);
-            colorBalanceMaterial.SetColor("_Highlights", colorBalance.highlights.value);
-            colorBalanceMaterial.SetFloat("_Saturation", colorBalance._Saturation.value);
-            colorBalanceMaterial.SetFloat("_Contrast", colorBalance._Contrast.value);
-            
-            
-
             Blit(cmd, tempTexture.Identifier(), source);
 
             context.ExecuteCommandBuffer(cmd);
@@ -78,10 +87,12 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
     {
         var volumeStack = VolumeManager.instance.stack;
         var colorBalance = volumeStack.GetComponent<ColorBalance>();
+        var testVolume = volumeStack.GetComponent<TestVolume01>();
 
-        if (colorBalance != null && colorBalance.IsActive())
+        // 允许任意一个 VolumeComponent 激活时执行
+        if ((colorBalance != null && colorBalance.IsActive()) || (testVolume != null && testVolume.IsActive()))
         {
-            colorBalancePass.Setup( colorBalance);
+            colorBalancePass.Setup(colorBalance, testVolume);
             renderer.EnqueuePass(colorBalancePass);
         }
     }

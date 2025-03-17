@@ -36,7 +36,7 @@ Material:
     - _MidColor: 1
     - _Saturation: 1
     m_Colors:
-    - _Highlights: {r: 1, g: 1, b: 1, a: 1}
+    - _Highlights: {r: 1, g: 0.0047169924, b: 0.0047169924, a: 1}
     - _Midtones: {r: 1, g: 1, b: 1, a: 1}
     - _Shadows: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

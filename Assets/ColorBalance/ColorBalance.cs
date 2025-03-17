@@ -12,8 +12,8 @@ public class ColorBalance : VolumeComponent, IPostProcessComponent
     public ColorParameter highlights = new ColorParameter(Color.white, false, false, true);
     // public float _Saturation;
     // public float _Contrast;
-    public FloatParameter _Saturation = new FloatParameter(1f);
-    public FloatParameter _Contrast = new FloatParameter(1f);
-    public bool IsActive() => shadows.value != Color.white || midtones.value != Color.white || highlights.value != Color.white||_Saturation.value !=1f||_Contrast.value !=1f;
+    // public FloatParameter _Saturation = new FloatParameter(1f);
+    // public FloatParameter _Contrast = new FloatParameter(1f);
+    public bool IsActive() => shadows.value != Color.white || midtones.value != Color.white || highlights.value != Color.white;
     public bool IsTileCompatible() => false;
 }
