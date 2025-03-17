@@ -22,25 +22,6 @@ MonoBehaviour:
   gain:
     m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
---- !u!114 &-5705052458993735049
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 850f08f1e352e3b45a39a3c9364279ef, type: 3}
-  m_Name: TestVolume01
-  m_EditorClassIdentifier: 
-  active: 1
-  _Saturation:
-    m_OverrideState: 0
-    m_Value: 1
-  _Contrast:
-    m_OverrideState: 0
-    m_Value: 1
 --- !u!114 &-2338366400135190741
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -73,7 +54,8 @@ MonoBehaviour:
   - {fileID: 2780205874857011205}
   - {fileID: -9061481910595100384}
   - {fileID: 8690427658235304301}
-  - {fileID: -5705052458993735049}
+  - {fileID: 3743705522541826627}
+  - {fileID: 5759911253534530561}
 --- !u!114 &786551604546605288
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -137,6 +119,50 @@ MonoBehaviour:
   referrnceResolutionX:
     m_OverrideState: 1
     m_Value: 1334
+--- !u!114 &3743705522541826627
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 850f08f1e352e3b45a39a3c9364279ef, type: 3}
+  m_Name: TestVolume01
+  m_EditorClassIdentifier: 
+  active: 1
+  _Saturation:
+    m_OverrideState: 1
+    m_Value: 1
+  _Contrast:
+    m_OverrideState: 1
+    m_Value: 1
+--- !u!114 &5759911253534530561
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 292b456f8535c0e4a94675a6556b1a7c, type: 3}
+  m_Name: BloomSettings
+  m_EditorClassIdentifier: 
+  active: 1
+  threshold:
+    m_OverrideState: 0
+    m_Value: 1
+  intensity:
+    m_OverrideState: 0
+    m_Value: 1
+  bloomColor:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  blurSize:
+    m_OverrideState: 0
+    m_Value: 1
 --- !u!114 &8690427658235304301
 MonoBehaviour:
   m_ObjectHideFlags: 3
