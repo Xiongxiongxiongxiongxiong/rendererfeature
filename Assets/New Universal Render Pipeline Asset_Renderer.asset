@@ -151,7 +151,6 @@ MonoBehaviour:
   m_Name: ColorBalanceRenderFeature
   m_EditorClassIdentifier: 
   m_Active: 1
-  Event: 300
   colorBalanceMaterial: {fileID: 2100000, guid: 8dbdfe1d6ee2006499005cf060129339, type: 2}
 --- !u!114 &2369947839222586816
 MonoBehaviour:
@@ -202,8 +201,7 @@ MonoBehaviour:
   m_Name: ColorBalanceRenderFeature
   m_EditorClassIdentifier: 
   m_Active: 0
-  Event: 300
-  colorBalanceMaterial: {fileID: 2100000, guid: 8dbdfe1d6ee2006499005cf060129339, type: 2}
+  colorBalanceMaterial: {fileID: 0}
 --- !u!114 &6805158631170234271
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -22,6 +22,28 @@ MonoBehaviour:
   gain:
     m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &-5979505630976423627
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 272fa38c69810284dbb2999284ca4c41, type: 3}
+  m_Name: ColorBalance
+  m_EditorClassIdentifier: 
+  active: 1
+  "\u6697\u90E8":
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  "\u7070\u90E8":
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  "\u4EAE\u90E8":
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &-2338366400135190741
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -38,6 +60,25 @@ MonoBehaviour:
   offset:
     m_OverrideState: 1
     m_Value: 0.01
+--- !u!114 &-1174817245482466050
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 850f08f1e352e3b45a39a3c9364279ef, type: 3}
+  m_Name: TestVolume01
+  m_EditorClassIdentifier: 
+  active: 1
+  "\u9971\u548C\u5EA6":
+    m_OverrideState: 0
+    m_Value: 1
+  "\u5BF9\u6BD4\u5EA6":
+    m_OverrideState: 0
+    m_Value: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51,11 +92,10 @@ MonoBehaviour:
   m_Name: Global Volume Profile
   m_EditorClassIdentifier: 
   components:
-  - {fileID: 2780205874857011205}
   - {fileID: -9061481910595100384}
-  - {fileID: 8690427658235304301}
-  - {fileID: 3743705522541826627}
-  - {fileID: 5759911253534530561}
+  - {fileID: -5979505630976423627}
+  - {fileID: -1174817245482466050}
+  - {fileID: 6888218847265563308}
 --- !u!114 &786551604546605288
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -69,31 +109,15 @@ MonoBehaviour:
   m_Name: ColorBalance
   m_EditorClassIdentifier: 
   active: 1
-  shadows:
+  "\u6697\u90E8":
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
-  midtones:
+  "\u7070\u90E8":
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
-  highlights:
+  "\u4EAE\u90E8":
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
---- !u!114 &2780205874857011205
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd3504c477ee5e7468286a05a117c71e, type: 3}
-  m_Name: TestVolume
-  m_EditorClassIdentifier: 
-  active: 1
-  offset:
-    m_OverrideState: 1
-    m_Value: 0.01
 --- !u!114 &3191296853924292707
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -119,26 +143,7 @@ MonoBehaviour:
   referrnceResolutionX:
     m_OverrideState: 1
     m_Value: 1334
---- !u!114 &3743705522541826627
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 850f08f1e352e3b45a39a3c9364279ef, type: 3}
-  m_Name: TestVolume01
-  m_EditorClassIdentifier: 
-  active: 1
-  _Saturation:
-    m_OverrideState: 1
-    m_Value: 1
-  _Contrast:
-    m_OverrideState: 1
-    m_Value: 1
---- !u!114 &5759911253534530561
+--- !u!114 &6888218847265563308
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,37 +156,18 @@ MonoBehaviour:
   m_Name: BloomSettings
   m_EditorClassIdentifier: 
   active: 1
-  threshold:
+  "\u8F89\u5149\u9608\u503C":
     m_OverrideState: 0
-    m_Value: 1
-  intensity:
+    m_Value: 0
+  "\u8F89\u5149\u5F3A\u5EA6":
     m_OverrideState: 0
-    m_Value: 1
-  bloomColor:
+    m_Value: 0
+  "\u8F89\u5149\u989C\u8272":
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
-  blurSize:
+  "\u8F89\u5149\u534A\u5F84":
     m_OverrideState: 0
-    m_Value: 1
---- !u!114 &8690427658235304301
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 272fa38c69810284dbb2999284ca4c41, type: 3}
-  m_Name: ColorBalance
-  m_EditorClassIdentifier: 
-  active: 1
-  shadows:
-    m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
-  midtones:
-    m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
-  highlights:
-    m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_Value: 0
+  "\u8F89\u5149\u8FED\u4EE3":
+    m_OverrideState: 0
+    m_Value: 0

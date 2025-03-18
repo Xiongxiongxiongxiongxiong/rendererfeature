@@ -11,17 +11,17 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
         private RenderTargetIdentifier source;
         private RenderTargetHandle tempTexture;
         private ColorBalance colorBalance;
-        private TestVolume01 testVolume01;
+        private ColorAdjustments ColorAdjustments;
         public ColorBalancePass(Material material)
         {
             colorBalanceMaterial = material;
             tempTexture.Init("_TemporaryColorTexture");
         }
 
-        public void Setup(ColorBalance colorBalance, TestVolume01 testVolume)
+        public void Setup(ColorBalance colorBalance, ColorAdjustments testVolume)
         {
             this.colorBalance = colorBalance;
-            this.testVolume01 = testVolume;
+            this.ColorAdjustments = testVolume;
         }
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         { // 渲染前回调
@@ -36,7 +36,7 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
         {
             // 合并判断逻辑，允许任意一个 VolumeComponent 激活
             bool isColorBalanceActive = colorBalance != null && colorBalance.IsActive();
-            bool isTestVolumeActive = testVolume01 != null && testVolume01.IsActive();
+            bool isTestVolumeActive = ColorAdjustments != null && ColorAdjustments.IsActive();
             if (!isColorBalanceActive && !isTestVolumeActive) return;
 
             CommandBuffer cmd = CommandBufferPool.Get("ColorBalance");
@@ -47,20 +47,20 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
             // 先设置材质参数
             if (isColorBalanceActive)
             {
-                colorBalanceMaterial.SetColor("_Shadows", colorBalance.shadows.value);
-                colorBalanceMaterial.SetColor("_Midtones", colorBalance.midtones.value);
-                colorBalanceMaterial.SetColor("_Highlights", colorBalance.highlights.value);
+                colorBalanceMaterial.SetColor("_Shadows", colorBalance.暗部.value);
+                colorBalanceMaterial.SetColor("_Midtones", colorBalance.灰部.value);
+                colorBalanceMaterial.SetColor("_Highlights", colorBalance.亮部.value);
             }
 
             if (isTestVolumeActive)
             {
-                colorBalanceMaterial.SetFloat("_Saturation", testVolume01._Saturation.value);
-                colorBalanceMaterial.SetFloat("_Contrast", testVolume01._Contrast.value);
+                colorBalanceMaterial.SetFloat("_Saturation", ColorAdjustments.饱和度.value);
+                colorBalanceMaterial.SetFloat("_Contrast", ColorAdjustments.对比度.value);
             }
 
             // 再执行 Blit
             Blit(cmd, source, tempTexture.Identifier(), colorBalanceMaterial, 0);
-            Blit(cmd, tempTexture.Identifier(), source);
+            Blit(cmd, tempTexture.Identifier(), source,colorBalanceMaterial, 0);
 
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
@@ -79,44 +79,85 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
     {
         private Material material;
         private BloomSettings bloomSettings;
+        private RenderTargetIdentifier source; // 添加源目标标识符
         private RenderTargetHandle bloomTexture;
+        private RenderTargetHandle tempTex1;
+        private RenderTargetHandle tempTex2;
 
         public BloomPass(Material mat)
         {
             material = mat;
             bloomTexture.Init("_BloomTempTex");
+            tempTex1.Init("_TempBloomTex1");
+            tempTex2.Init("_TempBloomTex2");
         }
         public void Setup(BloomSettings settings)
         {
             bloomSettings = settings;
         }
         
-        // public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
-        // { // 渲染前回调
-        //     //  RenderTextureDescriptor blitTargetDescriptor = renderingData.cameraData.cameraTargetDescriptor;
-        //     //   blitTargetDescriptor.depthBufferBits = 0;
-        //     ScriptableRenderer renderer = renderingData.cameraData.renderer;
-        //     bloomTexture = renderer.cameraColorTarget;
-        //     //  cmd.GetTemporaryRT(destinationId, blitTargetDescriptor, filterMode);
-        //     //  destination = new RenderTargetIdentifier(destinationId);
-        // }
+        public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
+        { // 渲染前回调
+            //  RenderTextureDescriptor blitTargetDescriptor = renderingData.cameraData.cameraTargetDescriptor;
+            //   blitTargetDescriptor.depthBufferBits = 0;
+            ScriptableRenderer renderer = renderingData.cameraData.renderer;
+            source = renderer.cameraColorTarget;
+            //  cmd.GetTemporaryRT(destinationId, blitTargetDescriptor, filterMode);
+            //  destination = new RenderTargetIdentifier(destinationId);
+        }
         
-        
+        public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
+        {
+            cmd.GetTemporaryRT(tempTex1.id, cameraTextureDescriptor);
+            cmd.GetTemporaryRT(tempTex2.id, cameraTextureDescriptor);
+        }
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             bool isBloomActive = bloomSettings != null && bloomSettings.IsActive();
             if (!isBloomActive ) return;
             CommandBuffer cmd = CommandBufferPool.Get("Bloom");
 
-            // 读取 ColorBalance 的结果
-            var source = Shader.PropertyToID("_ColorBalanceResult");
-            cmd.GetTemporaryRT(bloomTexture.id, renderingData.cameraData.cameraTargetDescriptor);
+            
+            
+            material.SetFloat("_BloomThreshold", bloomSettings.辉光阈值.value);
+            material.SetFloat("_BloomIntensity", bloomSettings.辉光强度.value);
+            material.SetFloat("_BloomRadius", bloomSettings.辉光半径.value);
+           //material.SetFloat("_bloomColor", bloomSettings.bloomColor.value);
+           material.SetColor("_bloomColor", bloomSettings.辉光颜色.value);
+            
+            RenderTextureDescriptor desc = renderingData.cameraData.cameraTargetDescriptor;
+            desc.width = Mathf.Max(1, desc.width / 2);
+            desc.height = Mathf.Max(1, desc.height / 2);
+            desc.depthBufferBits = 0;
+            
+            // 申请下采样的临时纹理
+            cmd.GetTemporaryRT(tempTex1.id, desc, FilterMode.Bilinear);
+            cmd.GetTemporaryRT(tempTex2.id, desc, FilterMode.Bilinear);
+            
+            // 设置纹理参数
+            //cmd.SetGlobalVector("_MainTex_TexelSize", new Vector4(1.0f / desc.width, 1.0f / desc.height, desc.width, desc.height));
 
-            // 应用 Bloom 处理（高光提取、模糊等）
-            Blit(cmd, source, bloomTexture.Identifier(), material, 0);
+            // 1. 亮区提取
+            cmd.Blit(source, tempTex1.Identifier(), material, 0);
 
-            // 将 Bloom 结果叠加到最终画面
-            Blit(cmd, bloomTexture.Identifier(), renderingData.cameraData.renderer.cameraColorTarget);
+            // 2. 模糊迭代
+            for (int i = 0; i < bloomSettings.辉光迭代.value; i++)
+            {
+                // 水平模糊
+                cmd.Blit(tempTex1.Identifier(), tempTex2.Identifier(), material, 1);
+                // 垂直模糊
+                cmd.Blit(tempTex2.Identifier(), tempTex1.Identifier(), material, 2);
+            }
+            
+            
+            // 3. 合成
+            RenderTextureDescriptor finalDesc = renderingData.cameraData.cameraTargetDescriptor;
+            finalDesc.depthBufferBits = 0;
+            cmd.GetTemporaryRT(tempTex2.id, finalDesc, FilterMode.Bilinear); // 重用tempTex2作为
+            
+            cmd.SetGlobalTexture("_BloomTex", tempTex1.Identifier());
+            cmd.Blit(source, tempTex2.Identifier(), material, 3);
+            cmd.Blit(tempTex2.Identifier(), source);
 
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
@@ -158,7 +199,7 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
     {
         var volumeStack = VolumeManager.instance.stack;
         var colorBalance = volumeStack.GetComponent<ColorBalance>();
-        var testVolume = volumeStack.GetComponent<TestVolume01>();
+        var testVolume = volumeStack.GetComponent<ColorAdjustments>();
 
         // 允许任意一个 VolumeComponent 激活时执行
         if ((colorBalance != null && colorBalance.IsActive()) || (testVolume != null && testVolume.IsActive()))

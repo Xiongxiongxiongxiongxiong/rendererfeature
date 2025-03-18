@@ -4,8 +4,8 @@ Shader "Hidden/BloomEffectURP"
     {
         _MainTex("Main Texture", 2D) = "white" {}
         _BloomThreshold("Bloom Threshold", Range(0,1)) = 0.8
-        _BloomIntensity("Bloom Intensity", Float) = 1.0
-        _BloomRadius("Bloom Radius", Range(0,8)) = 4
+        _BloomIntensity("Bloom Intensity", Float) = 0.0
+        _BloomRadius("Bloom Radius", Range(0,8)) = 0
     }
 
     SubShader
@@ -29,7 +29,7 @@ Shader "Hidden/BloomEffectURP"
             struct Attributes
             {
                 float4 positionOS : POSITION;
-                float2 uv : TEXCOORD0;
+                float2 uv : TEXCOORD0; 
             };
 
             struct Varyings

@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class TestVolume01 : VolumeComponent, IPostProcessComponent
+public class ColorAdjustments : VolumeComponent, IPostProcessComponent
 {
 
   //  public MaterialParameter material = new MaterialParameter(null);
   //public Shader shader;
     //public FloatParameter offset = new FloatParameter(0.1f);
-    public FloatParameter _Saturation = new FloatParameter(1f);
-    public FloatParameter _Contrast = new FloatParameter(1f);
+    public FloatParameter 饱和度 = new FloatParameter(1f);
+    public FloatParameter 对比度 = new FloatParameter(1f);
     public bool IsActive()
     {
         // _Saturation.value != 1f;

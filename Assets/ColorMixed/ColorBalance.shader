@@ -15,9 +15,10 @@ Shader "Hidden/Custom/ColorBalance"
         _Saturation("Saturation", Range(0.1, 5)) = 1 // ���Ͷ�
         _Contrast("Contrast", Range(0.4, 3)) = 1 // �Աȶ�
         //
-        _BloomThreshold("Bloom Threshold", Range(0,1)) = 0.8
-        _BloomIntensity("Bloom Intensity", Float) = 1.0
-        _BloomRadius("Bloom Radius", Range(0,8)) = 4
+        _BloomThreshold("Bloom Threshold", Range(0,1)) = 0
+        _BloomIntensity("Bloom Intensity", Float) = 0.0
+        _BloomRadius("Bloom Radius", Range(0,8)) = 0
+        _bloomColor("bloomColor",color)=(1,1,1,1)
     }
     SubShader
     {
@@ -48,6 +49,7 @@ Shader "Hidden/Custom/ColorBalance"
             SAMPLER(sampler_MainTex);
            // sampler2D _MainTex;
             float4 _MainTex_TexelSize;
+            float4 _bloomColor;
             float _BrightColor;
             float _MidColor;
             float _DarkColor;
@@ -110,7 +112,7 @@ Shader "Hidden/Custom/ColorBalance"
                 half3 cl=ColorBalance(color);
                 half3 c=Fullscreen(cl);
                 
-                half luminance = Lum(color.rgb);
+                half luminance = Lum(c.rgb);
                 half bright = saturate(luminance - _BloomThreshold);
                 
                 return half4(c,1);
@@ -139,6 +141,7 @@ Shader "Hidden/Custom/ColorBalance"
             SAMPLER(sampler_MainTex);
             float _BloomRadius;
             float4 _MainTex_TexelSize;
+            float4 _bloomColor;
 
             struct Attributes
             {
@@ -201,7 +204,7 @@ Shader "Hidden/Custom/ColorBalance"
             SAMPLER(sampler_MainTex);
             float _BloomRadius;
             float4 _MainTex_TexelSize;
-
+            float4 _bloomColor;
             struct Attributes
             {
                 float4 positionOS : POSITION;
@@ -264,7 +267,7 @@ Shader "Hidden/Custom/ColorBalance"
             TEXTURE2D(_BloomTex);
             SAMPLER(sampler_BloomTex);
             float _BloomIntensity;
-
+            float4 _bloomColor;
             struct Attributes
             {
                 float4 positionOS : POSITION;
@@ -289,7 +292,7 @@ Shader "Hidden/Custom/ColorBalance"
             {
                 half4 sceneColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
                 half4 bloomColor = SAMPLE_TEXTURE2D(_BloomTex, sampler_BloomTex, IN.uv);
-                return sceneColor + bloomColor * _BloomIntensity;
+                return sceneColor + bloomColor * _BloomIntensity*_bloomColor;
             }
             ENDHLSL
         }
