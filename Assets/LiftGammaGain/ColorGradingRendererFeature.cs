@@ -45,9 +45,9 @@ public class ColorGradingRendererFeature : ScriptableRendererFeature
             if (_volume == null) return;
 
             // 设置 Shader 参数
-            _material.SetColor("_Lift", _volume.lift.value);
-            _material.SetColor("_Gamma", _volume.gamma.value);
-            _material.SetColor("_Gain", _volume.gain.value);
+            _material.SetColor("_Lift", _volume.线性.value);
+            _material.SetColor("_Gamma", _volume.伽马.value);
+            _material.SetColor("_Gain", _volume.增益.value);
 
             // 获取相机的 RenderTexture
             CommandBuffer cmd = CommandBufferPool.Get("ColorGradingPass");

@@ -1,4 +1,4 @@
-Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
+Shader "Universal Render Pipeline/Custom/URP_Complete_Shader"
 {
     Properties
     {
@@ -6,6 +6,8 @@ Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
         [MainColor] _BaseColor("Color", Color) = (1,1,1,1)
         _Metallic("Metallic", Range(0, 1)) = 0.0
         _Smoothness("Smoothness", Range(0, 1)) = 0.5
+        [Toggle(_METALLICGLOSSMAP)] _UseMetallicMap("Use Metallic Map", Float) = 0
+        _MetallicGlossMap("Metallic (R) Smoothness (A)", 2D) = "white" {}
     }
 
     SubShader
@@ -16,6 +18,7 @@ Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
             "RenderPipeline" = "UniversalPipeline"
             "UniversalMaterialType" = "Lit"
             "IgnoreProjector" = "True"
+            "ShaderModel"="4.5"
         }
         LOD 300
 
@@ -28,7 +31,7 @@ Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
             #pragma vertex vert
             #pragma fragment frag
             
-            // URP 必要指令
+            // Universal Pipeline Keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
@@ -38,16 +41,23 @@ Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
             #pragma multi_compile _ SHADOWS_SHADOWMASK
             #pragma multi_compile _ DIRLIGHTMAP_COMBINED
             #pragma multi_compile _ LIGHTMAP_ON
-            #pragma multi_compile _ _REFLECTION_PROBE_BOX_PROJECTION
-            #pragma multi_compile _ _REFLECTION_PROBE_BLENDING
             
-            // 核心 URP 头文件
+            // Reflection Probe Keywords
+            #pragma multi_compile _ _REFLECTION_PROBE_BLENDING
+            #pragma multi_compile _ _REFLECTION_PROBE_BOX_PROJECTION
+
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            #pragma instancing_options procedural:setup
+            #pragma instancing_options lodfade
+            #pragma instancing_options assumeuniformscaling
+
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            //#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
-            // 添加子目录路径和扩展名 .hlsl
-             #include "Assets/shader/Shadows_XH.hlsl"
+            // #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
+            #include "Assets/shader/Shadows_XH.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/GlobalIllumination.hlsl"
+
             struct Attributes
             {
                 float4 positionOS   : POSITION;
@@ -62,7 +72,7 @@ Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
                 float4 positionCS   : SV_POSITION;
                 float2 uv           : TEXCOORD0;
                 float3 positionWS   : TEXCOORD1;
-                float3 normalWS    : TEXCOORD2;
+                float3 normalWS     : TEXCOORD2;
                 DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 3);
                 float4 shadowCoord : TEXCOORD4;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -70,13 +80,29 @@ Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
 
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
-            
-            CBUFFER_START(UnityPerMaterial)
-                float4 _BaseMap_ST;
-                half4 _BaseColor;
-                half _Metallic;
-                half _Smoothness;
-            CBUFFER_END
+            TEXTURE2D(_MetallicGlossMap);
+            SAMPLER(sampler_MetallicGlossMap);
+            // GPU Instancing Properties
+            UNITY_INSTANCING_BUFFER_START(Props)
+                UNITY_DEFINE_INSTANCED_PROP(float4, _MetallicGlossMap_ST)
+                UNITY_DEFINE_INSTANCED_PROP(float4, _BaseColor)
+                UNITY_DEFINE_INSTANCED_PROP(half, _Metallic)
+                UNITY_DEFINE_INSTANCED_PROP(half, _Smoothness)
+                UNITY_DEFINE_INSTANCED_PROP(float4, _BaseMap_ST)
+            UNITY_INSTANCING_BUFFER_END(Props)
+
+            // GPU Instancing Matrix Setup
+            #ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
+                float4x4 instanceMatrix;
+            #endif
+
+            void setup()
+            {
+                #ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
+                    unity_ObjectToWorld = instanceMatrix;
+                    unity_WorldToObject = inverse(instanceMatrix);
+                #endif
+            }
 
             Varyings vert(Attributes input)
             {
@@ -84,16 +110,23 @@ Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_TRANSFER_INSTANCE_ID(input, output);
 
-                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
-                output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                #ifdef UNITY_INSTANCING_ENABLED
+                    float4 worldPos = mul(UNITY_MATRIX_M, input.positionOS);
+                #else
+                    float3 worldPos = TransformObjectToWorld(input.positionOS.xyz);
+                #endif
+
+                output.positionCS = TransformWorldToHClip(worldPos.xyz);
+                output.positionWS = worldPos.xyz;
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
-                output.uv = TRANSFORM_TEX(input.texcoord, _BaseMap);
                 
-                // 光照贴图处理
+                // Handle UV and Lightmap
+                float4 baseMap_ST = UNITY_ACCESS_INSTANCED_PROP(Props, _BaseMap_ST);
+                output.uv = input.texcoord * baseMap_ST.xy + baseMap_ST.zw;
                 OUTPUT_LIGHTMAP_UV(input.lightmapUV, unity_LightmapST, output.lightmapUV);
                 OUTPUT_SH(output.normalWS.xyz, output.vertexSH);
-                
-                // 阴影坐标计算
+
+                // Shadows
                 output.shadowCoord = TransformWorldToShadowCoord(output.positionWS);
                 return output;
             }
@@ -101,52 +134,56 @@ Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
             half4 frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(input);
-                
-                // 材质采样
-                half4 baseColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv) * _BaseColor;
-                
-                // 初始化光照数据
+
+                // Material Properties
+                half4 baseColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv) 
+                               * UNITY_ACCESS_INSTANCED_PROP(Props, _BaseColor);
+                half4 RMGA = SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, input.uv) ;
+                half metallic = UNITY_ACCESS_INSTANCED_PROP(Props, _Metallic);
+                half smoothness = UNITY_ACCESS_INSTANCED_PROP(Props, _Smoothness);
+
+                // Lighting Data
                 InputData lightingInput = (InputData)0;
                 lightingInput.positionWS = input.positionWS;
                 lightingInput.normalWS = normalize(input.normalWS);
                 lightingInput.viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
                 lightingInput.shadowCoord = input.shadowCoord;
                 lightingInput.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, lightingInput.normalWS);
-                
-                // Shadowmask 处理
+
+                // Shadowmask
                 #if defined(LIGHTMAP_ON) && defined(SHADOWS_SHADOWMASK)
                     lightingInput.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUV);
                 #else
                     lightingInput.shadowMask = unity_ProbesOcclusion;
                 #endif
-                // 新增反射探针采样
+
+                // Reflection Probes
                 half3 reflectVector = reflect(-lightingInput.viewDirectionWS, lightingInput.normalWS);
-                half perceptualRoughness = 1.0 - _Smoothness;
+                half perceptualRoughness = 1.0 - smoothness;
                 half3 reflection = GlossyEnvironmentReflection(
                     reflectVector,
-                    input.positionWS,
+                    lightingInput.positionWS,
                     perceptualRoughness,
-                    1.0 // occlusion
+                    1.0
                 );
 
-
-                // 配置表面参数
-                SurfaceData surfaceInput = (SurfaceData)0;
+                // Surface Data
+                SurfaceData surfaceInput;
+                ZERO_INITIALIZE(SurfaceData, surfaceInput);
                 surfaceInput.albedo = baseColor.rgb;
                 surfaceInput.alpha = baseColor.a;
-                surfaceInput.metallic = _Metallic;
-                surfaceInput.smoothness = _Smoothness;
+                surfaceInput.metallic = metallic*RMGA.x;
+                surfaceInput.smoothness = smoothness;
                 surfaceInput.occlusion = 1.0;
-                // 混合反射到最终颜色
-                surfaceInput.emission = reflection *  _Metallic; // 金属材质反射表现
-                surfaceInput.specular = lerp(0.04, baseColor.rgb, _Metallic);
-                // 应用 URP PBR 光照计算
+                surfaceInput.emission = reflection * metallic;
+                surfaceInput.specular = lerp(0.04, baseColor.rgb, metallic);
+
+                // Final Lighting Calculation
                 return UniversalFragmentPBR(lightingInput, surfaceInput);
             }
             ENDHLSL
         }
- 
-        // 阴影投射 Pass
+
         Pass
         {
             Name "ShadowCaster"
@@ -155,11 +192,27 @@ Shader "Universal Render Pipeline/Custom/URP_Shadowmask"
             HLSLPROGRAM
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
+            #pragma multi_compile_instancing
             #include "Assets/shader/ShadowCasterPass_XH.hlsl"
             //#include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
             ENDHLSL
         }
+
+        Pass
+        {
+            Name "DepthOnly"
+            Tags { "LightMode" = "DepthOnly" }
+            
+            HLSLPROGRAM
+            #pragma vertex DepthOnlyVertex
+            #pragma fragment DepthOnlyFragment
+            #pragma multi_compile_instancing
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
+            ENDHLSL
+        }
     }
-    
+
     FallBack "Universal Render Pipeline/Lit"
+    //CustomEditor "UnityEditor.ShaderGUI" // 修改这一行
+    //CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.LitShader"
 }

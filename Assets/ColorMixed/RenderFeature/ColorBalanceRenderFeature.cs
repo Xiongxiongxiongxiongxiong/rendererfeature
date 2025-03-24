@@ -12,16 +12,18 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
         private RenderTargetHandle tempTexture;
         private ColorBalance colorBalance;
         private ColorAdjustments ColorAdjustments;
+        private ColorGradingVolume colorGradingVolume;
         public ColorBalancePass(Material material)
         {
             colorBalanceMaterial = material;
             tempTexture.Init("_TemporaryColorTexture");
         }
 
-        public void Setup(ColorBalance colorBalance, ColorAdjustments testVolume)
+        public void Setup(ColorBalance colorBalance, ColorAdjustments testVolume,ColorGradingVolume colorGrading)
         {
             this.colorBalance = colorBalance;
             this.ColorAdjustments = testVolume;
+            this.colorGradingVolume = colorGrading;
         }
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         { // 渲染前回调
@@ -37,6 +39,7 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
             // 合并判断逻辑，允许任意一个 VolumeComponent 激活
             bool isColorBalanceActive = colorBalance != null && colorBalance.IsActive();
             bool isTestVolumeActive = ColorAdjustments != null && ColorAdjustments.IsActive();
+            bool iscolorGradingVolume=colorGradingVolume !=null ;
             if (!isColorBalanceActive && !isTestVolumeActive) return;
 
             CommandBuffer cmd = CommandBufferPool.Get("ColorBalance");
@@ -57,7 +60,12 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
                 colorBalanceMaterial.SetFloat("_Saturation", ColorAdjustments.饱和度.value);
                 colorBalanceMaterial.SetFloat("_Contrast", ColorAdjustments.对比度.value);
             }
-
+            if (iscolorGradingVolume)
+            {
+                colorBalanceMaterial.SetColor("_Lift", colorGradingVolume.线性.value);
+                colorBalanceMaterial.SetColor("_Gamma", colorGradingVolume.伽马.value);
+                colorBalanceMaterial.SetColor("_Gain", colorGradingVolume.增益.value);
+            }
             // 再执行 Blit
             Blit(cmd, source, tempTexture.Identifier(), colorBalanceMaterial, 0);
             Blit(cmd, tempTexture.Identifier(), source,colorBalanceMaterial, 0);
@@ -170,10 +178,6 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
     }
     
     
-    
-    
-    
-
     public Material colorBalanceMaterial;
     private ColorBalancePass colorBalancePass;
     private BloomPass bloomPass;
@@ -200,11 +204,11 @@ public class ColorBalanceRenderFeature : ScriptableRendererFeature
         var volumeStack = VolumeManager.instance.stack;
         var colorBalance = volumeStack.GetComponent<ColorBalance>();
         var testVolume = volumeStack.GetComponent<ColorAdjustments>();
-
+        var colorGradingVolume = volumeStack.GetComponent<ColorGradingVolume>();
         // 允许任意一个 VolumeComponent 激活时执行
-        if ((colorBalance != null && colorBalance.IsActive()) || (testVolume != null && testVolume.IsActive()))
+        if ((colorBalance != null && colorBalance.IsActive()) || (testVolume != null && testVolume.IsActive()) ||colorGradingVolume !=null)
         {
-            colorBalancePass.Setup(colorBalance, testVolume);
+            colorBalancePass.Setup(colorBalance, testVolume,colorGradingVolume);
             renderer.EnqueuePass(colorBalancePass);
         }
         var bloomSettings = volumeStack.GetComponent<BloomSettings>();

@@ -29,9 +29,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BloomIntensity: 1
+    - _BloomIntensity: 1.5
     - _BloomRadius: 4
-    - _BloomThreshold: 0
+    - _BloomThreshold: 1
     - _BrightColor: 1
     - _Brightness: 1
     - _Contrast: 1
@@ -39,8 +39,11 @@ Material:
     - _MidColor: 1
     - _Saturation: 1
     m_Colors:
+    - _Gain: {r: 1, g: 1, b: 1, a: 1}
+    - _Gamma: {r: 0.9150943, g: 0.9150943, b: 0.9150943, a: 1}
     - _Highlights: {r: 1, g: 1, b: 1, a: 1}
+    - _Lift: {r: 0, g: 0, b: 0, a: 1}
     - _Midtones: {r: 1, g: 1, b: 1, a: 1}
-    - _Shadows: {r: 1, g: 1, b: 1, a: 1}
+    - _Shadows: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 1}
     - _bloomColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

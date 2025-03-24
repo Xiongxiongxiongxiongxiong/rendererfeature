@@ -1,34 +1,34 @@
-Shader "MyShader/BrightnessSaturationContrast" { // µ÷ÕûÁÁ¶È¡¢±¥ºÍ¶È¡¢¶Ô±È¶È
+Shader "MyShader/BrightnessSaturationContrast" { // è°ƒæ•´äº®åº¦ã€é¥±å’Œåº¦ã€å¯¹æ¯”åº¦
     Properties{
-        _MainTex("Base (RGB)", 2D) = "white" {} // Ö÷ÎÆÀí
-        _Brightness("Brightness", Range(0.5, 3)) = 1 // ÁÁ¶È
-        _Saturation("Saturation", Range(0.1, 5)) = 1 // ±¥ºÍ¶È
-        _Contrast("Contrast", Range(0.4, 3)) = 1 // ¶Ô±È¶È
+        _MainTex("Base (RGB)", 2D) = "white" {} // ä¸»çº¹ç†
+        _Brightness("Brightness", Range(0.5, 3)) = 1 // äº®åº¦
+        _Saturation("Saturation", Range(0.1, 5)) = 1 // é¥±å’Œåº¦
+        _Contrast("Contrast", Range(0.4, 3)) = 1 // å¯¹æ¯”åº¦
     }
 
         SubShader{
             Pass {
-                // Éî¶È²âÊÔÊ¼ÖÕÍ¨¹ı, ¹Ø±ÕÉî¶ÈĞ´Èë
+                // æ·±åº¦æµ‹è¯•å§‹ç»ˆé€šè¿‡, å…³é—­æ·±åº¦å†™å…¥
                 //ZTest Always ZWrite Off
 
                 CGPROGRAM
-                #pragma vertex vert_img // Ê¹ÓÃÄÚÖÃµÄvert_img¶¥µã×ÅÉ«Æ÷
+                #pragma vertex vert_img // ä½¿ç”¨å†…ç½®çš„vert_imgé¡¶ç‚¹ç€è‰²å™¨
                 #pragma fragment frag 
                 #include "UnityCG.cginc"
 
-                sampler2D _MainTex; // Ö÷ÎÆÀí
-                half _Brightness; // ÁÁ¶È
-                half _Saturation; // ±¥ºÍ¶È
-                half _Contrast; // ¶Ô±È¶È
+                sampler2D _MainTex; // ä¸»çº¹ç†
+                half _Brightness; // äº®åº¦
+                half _Saturation; // é¥±å’Œåº¦
+                half _Contrast; // å¯¹æ¯”åº¦
 
-                fixed4 frag(v2f_img i) : SV_Target { // v2f_imgÎªÄÚÖÃ½á¹¹Ìå, ÀïÃæÖ»°üº¬posºÍuv
-                    fixed4 tex = tex2D(_MainTex, i.uv); // ÎÆÀí²ÉÑù
-                    fixed3 finalColor = tex.rgb * _Brightness; // Ó¦ÓÃÁÁ¶È_Brightness
-                    fixed luminance = 0.2125 * tex.r + 0.7154 * tex.g + 0.0721 * tex.b; // ¼ÆËãÁÁ¶È
-                    fixed3 luminanceColor = fixed3(luminance, luminance, luminance); // ±¥ºÍ¶ÈÎª0¡¢ÁÁ¶ÈÎªluminanceµÄÑÕÉ«
-                    finalColor = lerp(luminanceColor, finalColor, _Saturation); // Ó¦ÓÃ±¥ºÍ¶È_Saturation
-                    fixed3 avgColor = fixed3(0.5, 0.5, 0.5); // ±¥ºÍ¶ÈÎª0¡¢ÁÁ¶ÈÎª0.5µÄÑÕÉ«
-                    finalColor = lerp(avgColor, finalColor, _Contrast); // Ó¦ÓÃ¶Ô±È¶È_Contrast
+                fixed4 frag(v2f_img i) : SV_Target { // v2f_imgä¸ºå†…ç½®ç»“æ„ä½“, é‡Œé¢åªåŒ…å«poså’Œuv
+                    fixed4 tex = tex2D(_MainTex, i.uv); // çº¹ç†é‡‡æ ·
+                    fixed3 finalColor = tex.rgb * _Brightness; // åº”ç”¨äº®åº¦_Brightness
+                    fixed luminance = 0.2125 * tex.r + 0.7154 * tex.g + 0.0721 * tex.b; // è®¡ç®—äº®åº¦
+                    fixed3 luminanceColor = fixed3(luminance, luminance, luminance); // é¥±å’Œåº¦ä¸º0ã€äº®åº¦ä¸ºluminanceçš„é¢œè‰²
+                    finalColor = lerp(luminanceColor, finalColor, _Saturation); // åº”ç”¨é¥±å’Œåº¦_Saturation
+                    fixed3 avgColor = fixed3(0.5, 0.5, 0.5); // é¥±å’Œåº¦ä¸º0ã€äº®åº¦ä¸º0.5çš„é¢œè‰²
+                    finalColor = lerp(avgColor, finalColor, _Contrast); // åº”ç”¨å¯¹æ¯”åº¦_Contrast
                     return fixed4(finalColor, tex.a);
                 }
 

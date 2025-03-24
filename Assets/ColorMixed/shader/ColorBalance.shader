@@ -15,10 +15,14 @@ Shader "Hidden/Custom/ColorBalance"
         _Saturation("Saturation", Range(0.1, 5)) = 1 // ���Ͷ�
         _Contrast("Contrast", Range(0.4, 3)) = 1 // �Աȶ�
         //
-        _BloomThreshold("Bloom Threshold", Range(0,1)) = 0
+        _BloomThreshold("Bloom Threshold", Range(0,1)) = 1
         _BloomIntensity("Bloom Intensity", Float) = 0.0
         _BloomRadius("Bloom Radius", Range(0,8)) = 0
         _bloomColor("bloomColor",color)=(1,1,1,1)
+        //
+        _Lift ("_Lift", Color) = (1,1,1,1)
+        _Gamma ("_Gamma", Color) = (1,1,1,1)
+        _Gain ("_Gain", Color) = (1,1,1,1)
     }
     SubShader
     {
@@ -58,6 +62,9 @@ Shader "Hidden/Custom/ColorBalance"
             float _Saturation;
             float _Contrast;
             float _BloomThreshold;
+            float3 _Lift;
+            float3 _Gamma;
+            float3 _Gain;
             half3 ColorBalance(half4 color)
             {
                 float luminance = dot(color.rgb, float3(0.2126, 0.7152, 0.0722));
@@ -98,6 +105,14 @@ Shader "Hidden/Custom/ColorBalance"
             {
                 return dot(color, half3(0.2126, 0.7152, 0.0722));
             }
+            float3 ApplyColorGrading(float3 color)
+            {
+                color = color + _Lift * (1.0 - color);  // Lift
+                color = pow(color, 1.0 / _Gamma);      // Gamma
+                color = color * _Gain;                  // Gain
+                return color;
+            }
+            
             Varyings vert(Attributes IN)
             {
                 Varyings OUT;
@@ -109,13 +124,11 @@ Shader "Hidden/Custom/ColorBalance"
             half4 frag_extract(Varyings IN) : SV_Target
             {
                 half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
-                half3 cl=ColorBalance(color);
-                half3 c=Fullscreen(cl);
-                
-                half luminance = Lum(c.rgb);
-                half bright = saturate(luminance - _BloomThreshold);
-                
-                return half4(c,1);
+                half3 finalColorGrading=ApplyColorGrading(color);
+                half3 finalColorBalance=ColorBalance(half4(finalColorGrading,1));
+                half3 finalColorAdjustments=Fullscreen(finalColorBalance);
+
+                return half4(finalColorAdjustments,1);
             }
             ENDHLSL
         }
@@ -268,6 +281,7 @@ Shader "Hidden/Custom/ColorBalance"
             SAMPLER(sampler_BloomTex);
             float _BloomIntensity;
             float4 _bloomColor;
+           float _BloomThreshold;
             struct Attributes
             {
                 float4 positionOS : POSITION;
@@ -292,7 +306,8 @@ Shader "Hidden/Custom/ColorBalance"
             {
                 half4 sceneColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
                 half4 bloomColor = SAMPLE_TEXTURE2D(_BloomTex, sampler_BloomTex, IN.uv);
-                return sceneColor + bloomColor * _BloomIntensity*_bloomColor;
+                half4 finalColor = sceneColor + bloomColor * _BloomIntensity*_bloomColor;
+                return lerp(sceneColor,finalColor,_BloomThreshold);
             }
             ENDHLSL
         }

@@ -1,27 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-9061481910595100384
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dad5c17ef003cf042b2f7d5fd4cb65eb, type: 3}
-  m_Name: ColorGradingVolume
-  m_EditorClassIdentifier: 
-  active: 1
-  lift:
-    m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
-  gamma:
-    m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
-  gain:
-    m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &-5979505630976423627
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -34,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 272fa38c69810284dbb2999284ca4c41, type: 3}
   m_Name: ColorBalance
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   "\u6697\u90E8":
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
   "\u7070\u90E8":
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
   "\u4EAE\u90E8":
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &-2338366400135190741
 MonoBehaviour:
@@ -60,6 +38,28 @@ MonoBehaviour:
   offset:
     m_OverrideState: 1
     m_Value: 0.01
+--- !u!114 &-2245435027669192221
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dad5c17ef003cf042b2f7d5fd4cb65eb, type: 3}
+  m_Name: ColorGradingVolume
+  m_EditorClassIdentifier: 
+  active: 1
+  "\u7EBF\u6027":
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  "\u4F3D\u9A6C":
+    m_OverrideState: 1
+    m_Value: {r: 0.9150943, g: 0.9150943, b: 0.9150943, a: 1}
+  "\u589E\u76CA":
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &-1174817245482466050
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -74,10 +74,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   "\u9971\u548C\u5EA6":
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1
   "\u5BF9\u6BD4\u5EA6":
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -92,10 +92,28 @@ MonoBehaviour:
   m_Name: Global Volume Profile
   m_EditorClassIdentifier: 
   components:
-  - {fileID: -9061481910595100384}
   - {fileID: -5979505630976423627}
   - {fileID: -1174817245482466050}
   - {fileID: 6888218847265563308}
+  - {fileID: -2245435027669192221}
+  - {fileID: 299168109510776630}
+  - {fileID: 3909884886108985158}
+--- !u!114 &299168109510776630
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd3504c477ee5e7468286a05a117c71e, type: 3}
+  m_Name: TestVolume
+  m_EditorClassIdentifier: 
+  active: 0
+  offset:
+    m_OverrideState: 0
+    m_Value: 0.1
 --- !u!114 &786551604546605288
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -143,6 +161,53 @@ MonoBehaviour:
   referrnceResolutionX:
     m_OverrideState: 1
     m_Value: 1334
+--- !u!114 &3909884886108985158
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
+  m_Name: Bloom
+  m_EditorClassIdentifier: 
+  active: 0
+  skipIterations:
+    m_OverrideState: 0
+    m_Value: 1
+  threshold:
+    m_OverrideState: 1
+    m_Value: 0.96
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.12
+  scatter:
+    m_OverrideState: 1
+    m_Value: 0.7
+  clamp:
+    m_OverrideState: 1
+    m_Value: 65472
+  tint:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  highQualityFiltering:
+    m_OverrideState: 1
+    m_Value: 0
+  downscale:
+    m_OverrideState: 0
+    m_Value: 0
+  maxIterations:
+    m_OverrideState: 0
+    m_Value: 6
+  dirtTexture:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
+    dimension: 1
+  dirtIntensity:
+    m_OverrideState: 0
+    m_Value: 0
 --- !u!114 &6888218847265563308
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -155,19 +220,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 292b456f8535c0e4a94675a6556b1a7c, type: 3}
   m_Name: BloomSettings
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   "\u8F89\u5149\u9608\u503C":
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   "\u8F89\u5149\u5F3A\u5EA6":
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1.5
   "\u8F89\u5149\u989C\u8272":
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
   "\u8F89\u5149\u534A\u5F84":
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 4
   "\u8F89\u5149\u8FED\u4EE3":
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 4
